@@ -6,8 +6,9 @@ on:
         description: Release tag to verify
         required: true
         default: v0.1.2
+# 초안 릴리즈 조회에는 GitHub의 push 접근 권한이 필요하다.
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     strategy:
