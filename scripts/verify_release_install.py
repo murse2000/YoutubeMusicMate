@@ -13,6 +13,9 @@ import psutil
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from musicmate.updater import decode_manifest, instance_lock, platform_key, select_asset
 
+sys.stdout.reconfigure(encoding='utf-8')
+sys.stderr.reconfigure(encoding='utf-8')
+
 folder = Path(sys.argv[1]).resolve()
 envelope = (folder / 'latest.json').read_text(encoding='utf-8')
 manifest = decode_manifest(envelope.encode())
@@ -96,7 +99,7 @@ with tempfile.TemporaryDirectory(prefix='musicmate-release-verify-') as temporar
             launched.wait(timeout=15)
         for candidate in psutil.process_iter():
             try:
-                if Path(candidate.exe()).resolve().is_relative_to(target.resolve()):
+                if Path(candidate.exe()).resolve().is_relative_to(work.resolve()):
                     candidate.terminate()
                     candidate.wait(timeout=15)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
