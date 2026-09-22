@@ -79,4 +79,14 @@ YouTube 측 변경·접근 제한에 따라 다운로드가 실패할 수 있습
 
 다운로드 중에는 취소할 수 있습니다. 검증이 끝나 설치 프로그램에 넘긴 이후에는 앱을 종료하고 설치합니다. macOS는 앱을 응용 프로그램 폴더로 옮겨 사용하세요. Windows는 사용자 쓰기 권한이 있는 위치에 폴더 전체를 풀어 사용하세요. 읽기 전용 위치·macOS 앱 임시 실행 위치에서는 자동 설치를 시작하지 않습니다.
 
-서명 비밀키는 Git에 포함하지 않으며 GitHub Actions의 `UPDATE_SIGNING_KEY` 비밀값으로 관리합니다. 공개 배포한 앱의 업데이트 호환성을 유지하려면 이 키를 보존해야 합니다. 0.1.0에는 자동업데이트 기능이 없으므로 0.1.2을 한 번 직접 설치해야 합니다.
+서명 비밀키는 Git에 포함하지 않으며 GitHub Actions의 `UPDATE_SIGNING_KEY` 비밀값으로 관리합니다. 공개 배포한 앱의 업데이트 호환성을 유지하려면 이 키를 보존해야 합니다. 0.1.0에는 자동업데이트 기능이 없으므로 0.1.3을 한 번 직접 설치해야 합니다.
+
+### Intel Mac 빌드 의존성
+
+cryptography 49 이후에는 Intel Mac용 사전 빌드 휠이 제공되지 않습니다. PyInstaller 안에서 Python의 OpenSSL과 충돌하지 않도록 정적 링크로 빌드해야 합니다. Homebrew의 OpenSSL과 Rust가 설치된 상태에서 가상환경을 사용해 다음 명령을 먼저 실행하세요. CI에는 이 설정이 적용되어 있습니다.
+
+```sh
+OPENSSL_STATIC=1 python -m pip install --force-reinstall --no-cache-dir --no-binary cryptography cryptography==50.0.1
+```
+
+[cryptography 공식 설치 안내](https://cryptography.io/en/latest/installation/)를 따르며, 빌드 스크립트도 동적 OpenSSL 연결이 남아 있으면 패키징을 중단합니다.

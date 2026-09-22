@@ -22,6 +22,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Build static cryptography for Intel Mac
+        if: matrix.os == 'macos-15-intel'
+        run: python -m pip install --no-cache-dir --no-binary cryptography cryptography==50.0.1
+        env:
+          OPENSSL_STATIC: '1'
       - run: python -m pip install -r requirements-dev.txt
       - run: python -m pytest -q
         env:
