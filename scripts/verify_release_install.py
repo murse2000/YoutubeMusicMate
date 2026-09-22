@@ -48,6 +48,7 @@ with tempfile.TemporaryDirectory(prefix='musicmate-release-verify-') as temporar
             'processes': [{'pid': parent.pid, 'created': psutil.Process(parent.pid).create_time()}]}
     plan_path = work / 'plan.json'
     plan_path.write_text(json.dumps(plan), encoding='utf-8')
+    launched = None
     process = subprocess.Popen([str(helper), str(plan_path)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         deadline = time.monotonic() + 30
@@ -90,9 +91,12 @@ with tempfile.TemporaryDirectory(prefix='musicmate-release-verify-') as temporar
             parent.terminate(); parent.wait(timeout=10)
         if process.poll() is None:
             process.terminate(); process.wait(timeout=10)
+        if launched is not None and launched.is_running():
+            launched.terminate()
+            launched.wait(timeout=15)
         for candidate in psutil.process_iter():
             try:
-                if Path(candidate.exe()).is_relative_to(target):
+                if Path(candidate.exe()).resolve().is_relative_to(target.resolve()):
                     candidate.terminate()
                     candidate.wait(timeout=15)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
