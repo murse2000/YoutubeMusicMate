@@ -54,7 +54,7 @@ python scripts/build.py
 - Blender의 공개 Big Buck Bunny 영상으로 실제 다운로드·597초 MP3 변환·표지 삽입 확인. 검증 파일: `build/verification/Big Buck Bunny.mp3`.
 - LRCLIB 실서비스에서 일반 가사 응답 확인. 실제 음악 한 곡의 다운로드와 자동 가사 매칭을 연결한 검증은 미수행.
 - macOS 패키지 앱에서도 실제 영상 정보·표지 조회 및 MP3 저장 완료 화면 확인. 출력 MP3의 597초 길이·제목·표지·ID3v2.3 태그 재확인.
-- Windows 실기기 실행 검증은 미수행.
+- GitHub Actions의 Apple Silicon·Intel Mac·Windows x64 환경에서 실제 배포 설치 프로그램의 종료 대기, 앱 교체, 새 앱 프로세스 재실행을 확인했습니다. Windows 사용자 실기기에서의 수동 UI 검증은 별도입니다.
 
 ## 구성 및 참고
 
@@ -90,3 +90,10 @@ OPENSSL_STATIC=1 python -m pip install --force-reinstall --no-cache-dir --no-bin
 ```
 
 [cryptography 공식 설치 안내](https://cryptography.io/en/latest/installation/)를 따르며, 빌드 스크립트도 동적 OpenSSL 연결이 남아 있으면 패키징을 중단합니다.
+
+## v0.1.3 릴리즈 검증
+
+- [세 플랫폼 빌드 및 각 24개 테스트](https://github.com/murse2000/YoutubeMusicMate/actions/runs/35741171930): 성공
+- [실제 배포 업데이트 프로그램 검증](https://github.com/murse2000/YoutubeMusicMate/actions/runs/35741911174): 세 플랫폼 모두 종료 대기·교체·재실행 성공
+- 업로드된 ZIP/업데이트 패키지와 서명된 업데이트 정보의 크기·SHA-256 일치 확인
+- [릴리즈 다운로드](https://github.com/murse2000/YoutubeMusicMate/releases/tag/v0.1.3)

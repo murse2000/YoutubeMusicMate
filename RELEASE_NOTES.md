@@ -20,3 +20,10 @@ ZIP을 풀어 사용하세요. Mac은 앱을 응용 프로그램 폴더에 옮�
 `.tar.gz`와 `latest.json`은 자동업데이트용입니다. `SHA256SUMS.txt`는 다운로드 검증용입니다.
 
 이 릴리즈는 Apple Developer ID 공증 및 Windows 코드 서명이 적용되지 않았습니다. 업데이트 파일 자체는 별도의 Ed25519 키로 검증합니다. 기존 0.1.0 앱은 업데이트 기능이 없어 이 버전을 한 번 직접 설치해야 합니다.
+
+## 검증
+
+- Apple Silicon Mac, Intel Mac, Windows x64에서 각 24개 자동 테스트 및 빌드 성공
+- 세 플랫폼에서 배포된 업데이트 실행 파일로 기존 프로세스 종료 대기 → 앱 교체 → 새 앱 재실행 확인
+- 업로드된 파일의 Ed25519 서명, 크기, SHA-256 일치 확인
+- [빌드 결과](https://github.com/murse2000/YoutubeMusicMate/actions/runs/35741171930) · [실제 업데이트 검증](https://github.com/murse2000/YoutubeMusicMate/actions/runs/35741911174)
