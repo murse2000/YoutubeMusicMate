@@ -1,4 +1,4 @@
-## YoutubeMusicMate 0.1.1
+## YoutubeMusicMate 0.1.2
 
 - YouTube / YouTube Music의 개별 영상 음원을 MP3로 저장합니다.
 - 제목·가수·앨범, 영상 표지, 일반 가사를 MP3 태그에 저장합니다.

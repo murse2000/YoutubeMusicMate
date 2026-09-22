@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 import json
+import shutil
 import threading
 from dataclasses import replace
 from pathlib import Path
@@ -52,6 +53,8 @@ class Window(QMainWindow):
         self.update_worker = None
         self.available_update = None
         self.install_pending = False
+        self.prepared_update = None
+        self.install_handoff = False
         root = QWidget()
         self.setCentralWidget(root)
         layout = QVBoxLayout(root)
@@ -214,11 +217,10 @@ class Window(QMainWindow):
         dialog.exec()
         if dialog.clickedButton() != install or self.worker is not None:
             return
-        def download(cancel, progress):
-            stage = updater.prepare_update(update, cancel, progress)
-            updater.launch_helper(stage)
-            return stage
-        self.start(download, self.update_prepared)
+        self.start(lambda cancel, progress: updater.prepare_update(update, cancel, progress), self.update_downloaded)
+
+    def update_downloaded(self, stage):
+        self.prepared_update = stage
 
     def update_prepared(self, stage):
         self.install_pending = True
@@ -268,9 +270,22 @@ class Window(QMainWindow):
     def finished(self):
         worker = self.worker
         self.worker = None
+        cancelled = worker.cancel.is_set()
         worker.deleteLater()
         self.busy(False)
         self.progress.setRange(0, 100)
+        if self.prepared_update is not None:
+            stage = self.prepared_update
+            self.prepared_update = None
+            if cancelled:
+                shutil.rmtree(stage)
+                self.status.setText('업데이트 다운로드를 취소했습니다.')
+                return
+            self.install_handoff = True
+            self.start(lambda cancel, progress: updater.launch_helper(stage), self.update_prepared)
+            self.cancel_button.setEnabled(False)
+            return
+        self.install_handoff = False
         if self.install_pending:
             QApplication.instance().quit()
 
@@ -330,12 +345,15 @@ class Window(QMainWindow):
         self.status.setText(f"저장 완료: {path.name}\n{notice}")
 
     def cancel(self):
-        if self.worker:
+        if self.worker and not self.install_handoff:
             self.worker.cancel.set()
             self.cancel_button.setEnabled(False)
             self.status.setText("취소 중… 현재 네트워크 요청이 끝나면 중단합니다.")
 
     def closeEvent(self, event):
+        if self.install_handoff:
+            event.ignore()
+            return
         if self.worker is not None or self.update_worker is not None:
             self.cancel()
             event.ignore()

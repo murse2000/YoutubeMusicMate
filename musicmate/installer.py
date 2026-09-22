@@ -82,7 +82,7 @@ def replace_app(prepared: Path, target: Path, backup: Path):
 
 def start_app(target: Path):
     env = dict(os.environ, PYINSTALLER_RESET_ENVIRONMENT='1')
-    command = ['open', str(target)] if sys.platform == 'darwin' else [str(target / 'YoutubeMusicMate.exe')]
+    command = ['open', '-n', str(target)] if sys.platform == 'darwin' else [str(target / 'YoutubeMusicMate.exe')]
     subprocess.Popen(command, env=env, cwd=target.parent, stdin=subprocess.DEVNULL,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
